@@ -30,6 +30,8 @@ queue:
   image: aegir/hostmaster
   volumes_from:
     - data
+  links:
+  - database:database
   entrypoint:
     - docker-entrypoint-queue.sh
 
