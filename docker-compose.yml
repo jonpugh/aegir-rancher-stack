@@ -1,18 +1,19 @@
-load:
-  ports:
-  - 80:80
-  tty: true
-  image: rancher/load-balancer-service
-  links:
-  - hostmaster:hostmaster
-  stdin_open: true
+#load:
+#  ports:
+#  - 80:80
+#  tty: true
+#  image: rancher/load-balancer-service
+#  links:
+#  - hostmaster:hostmaster
+#  stdin_open: true
 
 hostmaster:
+  ports:
+  - 80:80
   environment:
     MYSQL_ROOT_PASSWORD: longrandomsecurepassword
   domainname: aegir.local.computer
   labels:
-    io.rancher.sidekicks: data
     io.rancher.container.pull_image: always
   tty: true
   hostname: aegir.local.computer
@@ -22,6 +23,15 @@ hostmaster:
   stdin_open: true
   volumes_from:
   - data
+  command:
+  - tail -f /var/log/aegir/system.log
+
+queue:
+  image: aegir/hostmaster
+  volumes_from:
+    - data
+  entrypoint:
+    - docker-entrypoint-queue.sh
 
 data:
   labels:
