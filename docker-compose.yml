@@ -52,3 +52,4 @@ database:
   tty: true
   image: mariadb
   stdin_open: true
+  log_driver: none
