@@ -1,0 +1,42 @@
+load:
+  ports:
+  - 80:80
+  tty: true
+  image: rancher/load-balancer-service
+  links:
+  - hostmaster:hostmaster
+  stdin_open: true
+
+hostmaster:
+  environment:
+    MYSQL_ROOT_PASSWORD: longrandomsecurepassword
+  domainname: aegir.local.computer
+  labels:
+    io.rancher.sidekicks: data
+    io.rancher.container.pull_image: always
+  tty: true
+  hostname: aegir.local.computer
+  image: aegir/hostmaster
+  links:
+  - database:database
+  stdin_open: true
+  volumes_from:
+  - data
+
+data:
+  labels:
+    io.rancher.container.pull_image: always
+  tty: true
+  image: aegir/hostmaster
+  entrypoint:
+  - cat
+  stdin_open: true
+
+database:
+  environment:
+    MYSQL_ROOT_PASSWORD: longrandomsecurepassword
+  labels:
+    io.rancher.container.pull_image: always
+  tty: true
+  image: mariadb
+  stdin_open: true
