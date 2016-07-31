@@ -12,7 +12,6 @@ hostmaster:
   - 80:80
   environment:
     MYSQL_ROOT_PASSWORD: longrandomsecurepassword
-  domainname: aegir.local.computer
   labels:
     io.rancher.container.pull_image: always
   tty: true
