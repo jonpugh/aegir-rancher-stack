@@ -25,6 +25,11 @@ hostmaster:
   command:
   - tail -f /var/log/aegir/system.log
 
+# @TODO:
+# This is fundamentally flawed, thanks to Aegir.
+# From this container, you can access the database as root.
+# You cannot, however, access it for one of the hosted sites, ie. @hostmaster.
+# This is because Aegir grants the database access to users based on what "web server" they are on. Only server_master gets granted access...  I think we will have to either override @hostmaster to use root credentias or hack aegir into shape.
 queue:
   image: aegir/hostmaster
   volumes_from:
