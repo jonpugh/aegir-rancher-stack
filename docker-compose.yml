@@ -1,15 +1,14 @@
-#load:
-#  ports:
-#  - 80:80
-#  tty: true
-#  image: rancher/load-balancer-service
-#  links:
-#  - hostmaster:hostmaster
-#  stdin_open: true
-
-hostmaster:
+load:
   ports:
   - 80:80
+  tty: true
+  image: rancher/load-balancer-service
+  links:
+  - hostmaster:hostmaster
+  stdin_open: true
+hostmaster:
+  ports:
+  - 80/tcp
   environment:
     MYSQL_ROOT_PASSWORD: longrandomsecurepassword
   labels:
@@ -20,35 +19,6 @@ hostmaster:
   links:
   - database:database
   stdin_open: true
-  volumes_from:
-  - data
-  command:
-  - tail -f /var/log/aegir/system.log
-
-# @TODO:
-# This is fundamentally flawed, thanks to Aegir.
-# From this container, you can access the database as root.
-# You cannot, however, access it for one of the hosted sites, ie. @hostmaster.
-# This is because Aegir grants the database access to users based on what "web server" they are on. Only server_master gets granted access...  I think we will have to either override @hostmaster to use root credentias or hack aegir into shape.
-queue:
-  image: aegir/hostmaster
-  volumes_from:
-    - data
-  links:
-  - database:database
-  entrypoint:
-    - docker-entrypoint-queue.sh
-  command: ''
-
-data:
-  labels:
-    io.rancher.container.pull_image: always
-  tty: true
-  image: aegir/hostmaster
-  entrypoint:
-  - cat
-  stdin_open: true
-
 database:
   environment:
     MYSQL_ROOT_PASSWORD: longrandomsecurepassword
@@ -58,3 +28,4 @@ database:
   image: mariadb
   stdin_open: true
   log_driver: none
+  command: mysqld --innodb-large-prefix --innodb-file-format=barracuda --innodb-file-per-table
