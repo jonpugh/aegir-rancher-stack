@@ -29,3 +29,15 @@ database:
   stdin_open: true
   log_driver: none
   command: mysqld --innodb-large-prefix --innodb-file-format=barracuda --innodb-file-per-table
+phpmyadmin:
+  ports:
+  - 808:80
+  environment:
+    MYSQL_ROOT_PASSWORD: longrandomsecurepassword
+  labels:
+    io.rancher.container.pull_image: always
+  tty: true
+  image: phpmyadmin/phpmyadmin
+  links:
+  - database:db
+  stdin_open: true
